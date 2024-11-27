@@ -1,98 +1,99 @@
-// console.log('Hello World!');
-
-// definizione variabili necessarie
-const inputTodoForm = document.getElementById('todoInput');
-
-
-
-document.getElementById('todoForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    // 1 - Recuperare il testo della To-Do list
-    const textTodo = inputTodoForm.value;
-    console.log(textTodo);
-
-
-    // 2 - Creare HTML per inserire la To-Do
-    // const todo = `<li class="list-group-item d-flex align-items-center">
-    //         <input type="checkbox" class="form-check-input me-2">
-    //         <span>${textTodo}</span>
-    //         <button class="btn btn-sm btn-danger ms-auto">Elimina</button>
-    // </li>`;
-    // // console.log(todo);
-
-    // HTML li del To-Do item
-
-    const todoElement = document.createElement('li');
-    // todoElement.className = 'list-group-item d-flex align-items-center'; // className = proprieta string
-    todoElement.classList.add('list-group-item', 'd-flex', 'align-items-center'); //.remove()/.toggle()/.contains(); // classList = metodo object
-
-    todoElement.innerHTML = `<span>${textTodo}</span>
-        <button class="btn btn-sm btn-danger ms-auto">Elimina</button>`;
-
-    // HTML checkbox To-Do item
-    const htmlCheck = document.createElement('input');
-    htmlCheck.classList.add('todo-checkbox', 'form-check-input', 'me-2');
-    htmlCheck.setAttribute('type', 'checkbox');
-
-    htmlCheck.addEventListener('change', function (e) {
-        toggleDone(e.target); // qui
+document.addEventListener('DOMContentLoaded', () => {
+    const todoContainers = document.querySelectorAll('.todo-container');
+    todoContainers.forEach((container) => {
+        console.log('TodoList: ', container);
+        new TodoList(container);
     });
-
-    todoElement.prepend(htmlCheck);
-
-    console.log(todoElement);
-
-
-    // 3 - Aggiungere HTML nuovo alla lista
-    document.querySelectorAll('ul')[0].appendChild(todoElement);
 });
 
+class TodoList {
+    constructor(containerElement) {
+        this.container = containerElement;
+        this.form = this.container.querySelector('.todoForm');
+        this.input = this.container.querySelector('.todoInput');
+        this.list = this.container.querySelector('.todoList');
 
-// Al click sul check aggiungo line-trough al To-Do item
-// selezionare check box
-const checkboxes = document.querySelectorAll('input.todo-checkbox');
+        // Bind dei metodi per mantenere il contesto
+        this.addTodoItem = this.addTodoItem.bind(this);
+        this.toggleDone = this.toggleDone.bind(this);
+        this.deleteTodoItem = this.deleteTodoItem.bind(this);
 
+        // Aggiunta degli event listeners
+        // console.log('Form: ', this);
+        console.log('Form: ', this.form);
+        this.form.addEventListener('submit', this.addTodoItem);
 
-checkboxes.forEach((checkbox, index) => {
-    console.log('forEach checkbox ', checkbox);
-
-    if (checkbox.getAttribute('checked') !== null) {
-        checkbox.parentElement.querySelector('span').classList.add('text-decoration-line-through');
-        checkbox.parentElement.querySelector('span').classList.add('text-gray');
+        // Inizializzazione dei To-Do esistenti
+        this.initializeTodos();
     }
 
-    // agganciarli un evento click
-    checkbox.addEventListener('change', (e) => {
-        console.log('evento checked!');
+    initializeTodos() {
+        // Gestione dei checkbox esistenti
+        const checkboxes = this.list.querySelectorAll('input.todo-checkbox');
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                this.toggleDone(checkbox);
+            }
+            checkbox.addEventListener('change', (e) => {
+                this.toggleDone(e.target);
+            });
+        });
 
-        toggleDone(e.target); // qui
-    })
-});
+        // Gestione dei pulsanti "Elimina" esistenti
+        const deleteButtons = this.list.querySelectorAll('.deleteTodo');
+        deleteButtons.forEach((deleteButton) => {
+            const todoElement = deleteButton.parentElement;
+            deleteButton.addEventListener('click', () => {
+                this.deleteTodoItem(todoElement);
+            });
+        });
+    }
 
-// event listener's per la delete
-const deleteButtons = document.querySelectorAll('.deleteTodo');
-deleteButtons.forEach((deleteButton) => {
-    const todoElement = deleteButton.parentElement;
+    addTodoItem(e) {
+        e.preventDefault();
+        const textTodo = this.input.value.trim();
+        if (textTodo === '') return;
 
-    console.log(todoElement)
+        // Creazione dell'elemento To-Do
+        const todoElement = document.createElement('li');
+        todoElement.classList.add('list-group-item', 'd-flex', 'align-items-center');
 
-    deleteButton.addEventListener('click', function () {
-        deleteTodo(todoElement);
-    });
-});
+        todoElement.innerHTML = `
+            <span>${textTodo}</span>
+            <button class="btn btn-sm btn-danger ms-auto deleteTodo">Elimina</button>
+        `;
 
-// Rimuovere un To-Do item
-function deleteTodo(todoElement) {
-    todoElement.remove();
+        // Creazione della checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('todo-checkbox', 'form-check-input', 'me-2');
+        checkbox.addEventListener('change', (e) => {
+            this.toggleDone(e.target);
+        });
+
+        // Inserimento della checkbox nell'elemento To-Do
+        todoElement.prepend(checkbox);
+
+        // Gestione del pulsante "Elimina"
+        const deleteButton = todoElement.querySelector('.deleteTodo');
+        deleteButton.addEventListener('click', () => {
+            this.deleteTodoItem(todoElement);
+        });
+
+        // Aggiunta del nuovo To-Do alla lista
+        this.list.appendChild(todoElement);
+
+        // Reset del campo di input
+        this.input.value = '';
+    }
+
+    toggleDone(checkbox) {
+        const todoText = checkbox.parentElement.querySelector('span');
+        todoText.classList.toggle('text-decoration-line-through');
+        todoText.classList.toggle('text-gray');
+    }
+
+    deleteTodoItem(todoElement) {
+        todoElement.remove();
+    }
 }
-
-function toggleDone(checkbox) {
-    // aggiungere style="text-decoration: line-trough;"
-    const elSpan = checkbox.parentElement.querySelector('span');
-
-    elSpan.classList.toggle('text-decoration-line-through');
-    elSpan.classList.toggle('text-gray');
-}
-
-
