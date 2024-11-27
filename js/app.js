@@ -25,6 +25,57 @@ class TodoList {
 
         // Inizializzazione dei To-Do esistenti
         this.initializeTodos();
+        this.fetchTodos();
+    }
+
+    fetchTodos() {
+        axios.get('https://jsonplaceholder.typicode.com/todos')
+            .then((response) => {
+                const todos = response.data;
+                // Limitiamo il numero di To-Do a 10 per brevità
+                todos.slice(0, 10).forEach((todo) => {
+                    const todoElement = this.createTodoElement(todo.title, todo.completed);
+                    this.list.appendChild(todoElement);
+                });
+            })
+            .catch((error) => {
+                console.error('Errore durante il fetch delle To-Do:', error);
+            });
+    }
+
+    createTodoElement(text, completed = false) {
+        const todoElement = document.createElement('li');
+        todoElement.classList.add('list-group-item', 'd-flex', 'align-items-center');
+
+        todoElement.innerHTML = `
+            <span>${text}</span>
+            <button class="btn btn-sm btn-danger ms-auto deleteTodo">Elimina</button>
+        `;
+
+        // Creazione della checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('todo-checkbox', 'form-check-input', 'me-2');
+        checkbox.checked = completed;
+        checkbox.addEventListener('change', (e) => {
+            this.toggleDone(e.target);
+        });
+
+        // Inserimento della checkbox nell'elemento To-Do
+        todoElement.prepend(checkbox);
+
+        // Gestione del pulsante "Elimina"
+        const deleteButton = todoElement.querySelector('.deleteTodo');
+        deleteButton.addEventListener('click', () => {
+            this.deleteTodoItem(todoElement);
+        });
+
+        // Se la To-Do è completata, applica lo stile
+        if (completed) {
+            this.toggleDone(checkbox);
+        }
+
+        return todoElement;
     }
 
     initializeTodos() {
