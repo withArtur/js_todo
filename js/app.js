@@ -14,20 +14,20 @@ document.getElementById('todoForm').addEventListener('submit', function (e) {
 
 
     // 2 - Creare HTML per inserire la To-Do
-    // const htmlTodo = `<li class="list-group-item d-flex align-items-center">
+    // const todo = `<li class="list-group-item d-flex align-items-center">
     //         <input type="checkbox" class="form-check-input me-2">
     //         <span>${textTodo}</span>
     //         <button class="btn btn-sm btn-danger ms-auto">Elimina</button>
     // </li>`;
-    // // console.log(htmlTodo);
+    // // console.log(todo);
 
     // HTML li del To-Do item
 
-    const htmlTodoElement = document.createElement('li');
-    // htmlTodoElement.className = 'list-group-item d-flex align-items-center'; // className = proprieta string
-    htmlTodoElement.classList.add('list-group-item', 'd-flex', 'align-items-center'); //.remove()/.toggle()/.contains(); // classList = metodo object
+    const todoElement = document.createElement('li');
+    // todoElement.className = 'list-group-item d-flex align-items-center'; // className = proprieta string
+    todoElement.classList.add('list-group-item', 'd-flex', 'align-items-center'); //.remove()/.toggle()/.contains(); // classList = metodo object
 
-    htmlTodoElement.innerHTML = `<span>${textTodo}</span>
+    todoElement.innerHTML = `<span>${textTodo}</span>
         <button class="btn btn-sm btn-danger ms-auto">Elimina</button>`;
 
     // HTML checkbox To-Do item
@@ -39,13 +39,13 @@ document.getElementById('todoForm').addEventListener('submit', function (e) {
         toggleDone(e.target); // qui
     });
 
-    htmlTodoElement.prepend(htmlCheck);
+    todoElement.prepend(htmlCheck);
 
-    console.log(htmlTodoElement);
+    console.log(todoElement);
 
 
     // 3 - Aggiungere HTML nuovo alla lista
-    document.querySelectorAll('ul')[0].appendChild(htmlTodoElement);
+    document.querySelectorAll('ul')[0].appendChild(todoElement);
 });
 
 
@@ -58,7 +58,8 @@ checkboxes.forEach((checkbox, index) => {
     console.log('forEach checkbox ', checkbox);
 
     if (checkbox.getAttribute('checked') !== null) {
-        checkbox.parentElement.classList.add('text-decoration-line-through');
+        checkbox.parentElement.querySelector('span').classList.add('text-decoration-line-through');
+        checkbox.parentElement.querySelector('span').classList.add('text-gray');
     }
 
     // agganciarli un evento click
@@ -69,9 +70,21 @@ checkboxes.forEach((checkbox, index) => {
     })
 });
 
+// event listener's per la delete
+const deleteButtons = document.querySelectorAll('.deleteTodo');
+deleteButtons.forEach((deleteButton) => {
+    const todoElement = deleteButton.parentElement;
+
+    console.log(todoElement)
+
+    deleteButton.addEventListener('click', function () {
+        deleteTodo(todoElement);
+    });
+});
+
 // Rimuovere un To-Do item
-function deleteTodo() {
-    // click
+function deleteTodo(todoElement) {
+    todoElement.remove();
 }
 
 function toggleDone(checkbox) {
