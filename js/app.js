@@ -55,9 +55,7 @@ const checkboxes = document.querySelectorAll('input.todo-checkbox');
 
 
 checkboxes.forEach((checkbox, index) => {
-    console.log('forEach checkbox ', checkbox);
-
-    if (checkbox.getAttribute('checked') !== null) {
+    if (checkbox.checked) {
         checkbox.parentElement.querySelector('span').classList.add('text-decoration-line-through');
         checkbox.parentElement.querySelector('span').classList.add('text-gray');
     }
