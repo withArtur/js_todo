@@ -19,6 +19,37 @@
         <h1 class="text-center mb-4">To-Do List</h1>
 
         <!-- FORM TODO -->
+        <form id="todoForm2" class="input-group mb-3">
+            <input type="text" id="todoInput2" class="form-control" placeholder="Aggiungi una nuova attività..."
+                name="testTodo" required>
+
+            <button class="btn btn-primary" type="submit">Aggiungi</button>
+        </form>
+
+        <!-- LISTA DO-DO -->
+        <ul id="todoList2" class="list-group">
+
+            <li class="list-group-item d-flex align-items-center">
+                <input type="checkbox" class="todo-checkbox form-check-input me-2" checked>
+
+                <span>Prima attività</span>
+
+                <button class="btn btn-sm btn-danger ms-auto deleteTodo">Elimina</button>
+            </li>
+
+            <li class="list-group-item d-flex align-items-center">
+                <input type="checkbox" class="todo-checkbox form-check-input me-2">
+                <span>Seconda attività</span>
+                <button class="btn btn-sm btn-danger ms-auto">Elimina</button>
+            </li>
+
+        </ul>
+    </div>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">To-Do List</h1>
+
+        <!-- FORM TODO -->
         <form id="todoForm" class="input-group mb-3">
             <input type="text" id="todoInput" class="form-control" placeholder="Aggiungi una nuova attività..."
                 name="testTodo" required>
@@ -47,6 +78,7 @@
     </div>
 
     <script src="./js/app.js" defer></script>
+    <script src="./js/app2.js" defer></script>
 </body>
 
 </html>
