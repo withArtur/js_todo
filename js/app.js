@@ -13,6 +13,9 @@ class TodoList {
         this.input = this.container.querySelector('.todoInput');
         this.list = this.container.querySelector('.todoList');
 
+        // this.api.host = 'https://jsonplaceholder.typicode.com';
+        this.api_host = 'http://localhost:3000';
+
         // Bind dei metodi per mantenere il contesto
         this.addTodoItem = this.addTodoItem.bind(this);
         this.toggleDone = this.toggleDone.bind(this);
@@ -20,7 +23,7 @@ class TodoList {
 
         // Aggiunta degli event listeners
         // console.log('Form: ', this);
-        console.log('Form: ', this.form);
+        // console.log('Form: ', this.form);
         this.form.addEventListener('submit', this.addTodoItem);
 
         // Inizializzazione dei To-Do esistenti
@@ -28,10 +31,17 @@ class TodoList {
         this.fetchTodos();
     }
 
+    /**
+     * Fetch the todos from an API
+     */
     fetchTodos() {
-        axios.get('https://jsonplaceholder.typicode.com/todos')
+        const api_endpoint = this.api_host + '/todos/';
+
+        axios.get(api_endpoint)
             .then((response) => {
                 const todos = response.data;
+                console.log(todos);
+
                 // Limitiamo il numero di To-Do a 10 per brevità
                 todos.slice(0, 10).forEach((todo) => {
                     const todoElement = this.createTodoElement(todo.title, todo.completed);
@@ -43,6 +53,14 @@ class TodoList {
             });
     }
 
+
+    /**
+     * Create a todo HTML DOM element
+     *
+     * @param {string} text Todo text
+     * @param {boolean} completed Checked or not
+     * @returns void
+     */
     createTodoElement(text, completed = false) {
         const todoElement = document.createElement('li');
         todoElement.classList.add('list-group-item', 'd-flex', 'align-items-center');
@@ -78,6 +96,12 @@ class TodoList {
         return todoElement;
     }
 
+
+    /**
+     * Function that initialize the HTML todos already generated in markup
+     *
+     * @deprecated No more already initialized todos please
+     */
     initializeTodos() {
         // Gestione dei checkbox esistenti
         const checkboxes = this.list.querySelectorAll('input.todo-checkbox');
@@ -100,6 +124,12 @@ class TodoList {
         });
     }
 
+    /**
+     * Add the todo item to the list from the form
+     *
+     * @param {Event} e JS Event Object
+     * @returns undefined
+     */
     addTodoItem(e) {
         e.preventDefault();
         const textTodo = this.input.value.trim();
@@ -138,12 +168,22 @@ class TodoList {
         this.input.value = '';
     }
 
+    /**
+     * Toggle completion of todo
+     *
+     * @param {HTMLElement} checkbox The checked checkbox of todo
+     */
     toggleDone(checkbox) {
         const todoText = checkbox.parentElement.querySelector('span');
         todoText.classList.toggle('text-decoration-line-through');
         todoText.classList.toggle('text-gray');
     }
 
+    /**
+     * Delete and remove a todo
+     *
+     * @param {HTMLElement} todoElement The todo element in the mark up
+     */
     deleteTodoItem(todoElement) {
         todoElement.remove();
     }
